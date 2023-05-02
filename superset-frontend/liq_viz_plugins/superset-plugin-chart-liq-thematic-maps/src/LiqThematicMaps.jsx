@@ -26,7 +26,7 @@ import Loading from 'src/components/Loading';
 
 import { SupersetClient } from '@superset-ui/core';
 
-import _, { transform } from 'lodash';
+import _ from 'lodash';
 
 // UI imports
 import {
@@ -41,22 +41,14 @@ import { Menu, Layout } from 'antd';
 import SideDrawer from './components/SideDrawer.js';
 import Legend from './components/Legend.js';
 import Radius from './components/Radius.js';
-import DataDisplay from './components/DataDisplay.js';
 import Drivetime from './components/Drivetime.js';
 import Map from './components/Map.js';
 
 import transformProps from './plugin/transformProps.js';
 
-const { Content } = Layout;
 const { SubMenu } = Menu;
 
-const defaults = require('./defaultLayerStyles.js');
-
-const iconsSVG = require('./iconSVG.js');
-
 const liqSecrets = require('../../liq_secrets.js').liqSecrets;
-const layerStyles = defaults.defaultLayerStyles;
-const iconExprs = defaults.iconExprs;
 
 mapboxgl.accessToken = liqSecrets.mapbox.accessToken;
 
@@ -148,7 +140,7 @@ export default function LiqThematicMaps(props) {
     const rightCheck = () => {
       if (!('mapType' in transformedProps)) return true;
       if (transformedProps.mapType.includes('thematic')) return !cmapLoaded.right && !mapsLoaded.right;
-      return !mapsLoaded.right;
+      return loadSecondMap && !mapsLoaded.right;
     }
 
     const leftCheck = () => {
@@ -157,7 +149,7 @@ export default function LiqThematicMaps(props) {
     }
 
     if (isSecondMap) {
-      setLoading(rightCheck() && leftCheck());
+      setLoading(rightCheck() || leftCheck());
     } else {
       setLoading(leftCheck());
     }
@@ -386,50 +378,52 @@ export default function LiqThematicMaps(props) {
   }, [mapVis]);
 
   return (
-    <>
-      <Menu 
-        mode='horizontal' 
-        style={{
-          position: 'absolute',
-          zIndex: 100,
-          top: '5px',
-          left: '5px',
-          opacity: '80%'
-        }}
-      >
-        {items.map(i => (
-          i.children && i.children.length > 0 ?
-            <SubMenu 
-              title={<span>{i.icon}{i.label}</span>} style={{ opacity: '80%' }}
-              key='subMenu'
-            >
-              {i.children.map(c => (
-                c && <Menu.Item
-                  key={c.key} 
-                  onClick={c.onClick ? c.onClick : () => {}} 
-                  //disabled={Object.keys(colorMap).length === 0 && mapType.includes('thematic')}
-                  style={{ opacity: '80%' }}
-                >
-                  {c.icon}
-                  {c.label}
-                </Menu.Item>
-              ))}
-            </SubMenu>
-          :
-            i && <Menu.Item 
-              key={i.key} 
-              onClick={i.onClick ? i.onClick : () => {}} 
-              //disabled={Object.keys(colorMap).length === 0 && mapType.includes('thematic')}
-              style={{ opacity: '80%' }}
-            >
-              {i.icon}
-              {i.label}
-            </Menu.Item>
-        ))}
-      </Menu>
+    <div>
+      { !loading &&
+        <Menu 
+          mode='horizontal' 
+          style={{
+            position: 'absolute',
+            zIndex: 100,
+            top: '5px',
+            left: '5px',
+            opacity: '80%'
+          }}
+        >
+          {items.map(i => (
+            i.children && i.children.length > 0 ?
+              <SubMenu 
+                title={<span>{i.icon}{i.label}</span>} style={{ opacity: '80%' }}
+                key='subMenu'
+              >
+                {i.children.map(c => (
+                  c && <Menu.Item
+                    key={c.key} 
+                    onClick={c.onClick ? c.onClick : () => {}} 
+                    //disabled={Object.keys(colorMap).length === 0 && mapType.includes('thematic')}
+                    style={{ opacity: '80%' }}
+                  >
+                    {c.icon}
+                    {c.label}
+                  </Menu.Item>
+                ))}
+              </SubMenu>
+            :
+              i && <Menu.Item 
+                key={i.key} 
+                onClick={i.onClick ? i.onClick : () => {}} 
+                //disabled={Object.keys(colorMap).length === 0 && mapType.includes('thematic')}
+                style={{ opacity: '80%' }}
+              >
+                {i.icon}
+                {i.label}
+              </Menu.Item>
+          ))}
+        </Menu>
+      }
       <div style={{ 
-          height: loading ? 0 : height, 
-          width: loading ? 0 : '100%', 
+          height: height, 
+          width: '100%', 
           position: 'absolute',
           top: 0,
           bottom: 0,
@@ -446,7 +440,9 @@ export default function LiqThematicMaps(props) {
         <Map 
           {...{
             ...props, 
-            mapID: 'left', 
+            mapID: 'left',
+            width: loading ? 0 : width, 
+            height: loading ? 0 : height,
             setDrawerOpen, 
             setDrawerContent,
             setDrawerTitle,
@@ -462,6 +458,8 @@ export default function LiqThematicMaps(props) {
             {...{
               ...transformedProps, 
               mapID: 'right', 
+              width: loading ? 0 : width, 
+              height: loading ? 0 : height,
               setDrawerOpen,
               setDrawerContent, 
               setDrawerTitle,
@@ -484,6 +482,6 @@ export default function LiqThematicMaps(props) {
         />
       </div>
       {loading && <Loading position='floating' />}
-    </>
+    </div>
   ); 
 }

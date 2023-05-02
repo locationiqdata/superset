@@ -646,7 +646,8 @@ function Map(props, ref) {
         position: 'absolute',
         top: 0,
         bottom: 0,
-        left: 0
+        left: 0,
+        zIndex: loading ? -1 : 0
       }} 
     />
   );
