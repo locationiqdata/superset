@@ -133,6 +133,7 @@ export default function LiqThematicMaps(props) {
 
   const [mapVis, setMapVis] = useState('left');
 
+  // Hook to update loading status
   useEffect(() => {
 
     const isSecondMap = compareChart && ((typeof compareChart === 'number' && !(compareChart === -1)) || typeof compareChart === 'string');
