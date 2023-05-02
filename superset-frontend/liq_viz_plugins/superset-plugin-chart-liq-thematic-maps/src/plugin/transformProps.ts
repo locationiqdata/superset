@@ -150,7 +150,7 @@ export default function transformProps(chartProps : ChartProps) {
   });
   const taLoc : [number, number] = sectorLocs[Object.keys(sectorLocs).sort((a, b) => a.localeCompare(b))[0]];
 
-  const toRgbaStr = (color : RGBA) => `rgba(${color.r},${color.g},${color.b},${color.a})`;
+  const toRgbaStr = (color : RGBA) => color && 'r' in color ? `rgba(${color.r},${color.g},${color.b},${color.a})` : 'rgba(31, 168, 201, 100)';
 
   const newRadiusColor = toRgbaStr(radiusColor);
   const newDrivetimeColor = toRgbaStr(drivetimeColor);

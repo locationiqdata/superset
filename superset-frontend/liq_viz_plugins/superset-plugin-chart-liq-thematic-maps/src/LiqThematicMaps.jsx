@@ -165,10 +165,6 @@ export default function LiqThematicMaps(props) {
   }, [transformedProps, mapsLoaded, cmapLoaded, mapType, loadSecondMap])
 
   useEffect(() => {
-    console.log(loading);
-  }, [loading])
-
-  useEffect(() => {
     if (
       (compareChart && ((typeof compareChart === 'number' && !(compareChart === -1)) || typeof compareChart === 'string')) && 
       !mapsLoaded.left && 
