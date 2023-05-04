@@ -37,7 +37,7 @@ cd ./liq_viz_plugins/superset-plugin-chart-liq-thematic-maps
 npm run dev & # Dev
 # Uncomment below before merging master for prod
 # npm install --force
-npm run build-only # Prod
+# npm run build-only # Prod
 
 cd ../../
 
