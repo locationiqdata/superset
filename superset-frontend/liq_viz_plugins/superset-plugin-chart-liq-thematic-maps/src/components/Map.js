@@ -411,27 +411,27 @@ function Map(props, ref) {
         zoom: zoom
       };
       setMapPos({ ...newMapPos });
-      intranetLayers.map(l => {
-        const getExpr = ['get', 'zoom'];
-        const makeFilter = (lo, hi) => ['all', [['>=', getExpr, lo], ['<', getExpr, hi]]];
-        if (zoom < 10) {
-          map.current.setFilter(l, makeFilter(0, 10));
-        } else if (zoom < 11) {
-          map.current.setFilter(l, makeFilter(10, 11));
-        } else if (zoom < 12) {
-          map.current.setFilter(l, makeFilter(11, 12));
-        } else if (zoom < 13) {
-          map.current.setFilter(l, makeFilter(12, 13));
-        } else if (zoom < 14) {
-          map.current.setFilter(l, makeFilter(13, 14));
-        } else if (zoom < 15) {
-          map.current.setFilter(l, makeFilter(14, 15));
-        } else if (zoom < 16) {
-          map.current.setFilter(l, makeFilter(15, 16));
-        } else {
-          map.current.setFilter(l, ['==', getExpr, 16]);
-        }
-      })
+      if (map.current.isStyleLoaded()) {
+        intranetLayers.map(l => {
+          if (!(l === 'shopping_centres')) {
+            const getExpr = ['get', 'zoom'];
+            const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
+            if (zoom < 9) {
+              map.current.setFilter(l, makeFilter(0, 9));
+            } else if (zoom < 10) {
+              map.current.setFilter(l, makeFilter(11, 12));
+            } else if (zoom < 11) {
+              map.current.setFilter(l, makeFilter(12, 13));
+            } else if (zoom < 12) {
+              map.current.setFilter(l, makeFilter(13, 14));
+            } else if (zoom < 13) {
+              map.current.setFilter(l, makeFilter(14, 15));
+            } else {
+              map.current.setFilter(l, ['==', getExpr, 15]);
+            }
+          }
+        });
+      }
     });
 
     // When the map reveices new tile data, get rendered tile features and store them in state for styling
