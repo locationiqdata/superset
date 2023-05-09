@@ -571,7 +571,16 @@ COMMON_BOOTSTRAP_OVERRIDES_FUNC: Callable[
 #     }]
 
 # This is merely a default
-EXTRA_CATEGORICAL_COLOR_SCHEMES: List[Dict[str, Any]] = []
+EXTRA_CATEGORICAL_COLOR_SCHEMES: List[Dict[str, Any]] = [
+    {
+        "id": 'liqColours',
+        "description": '',
+        "label": 'LIQ Colours',
+        "isDefault": True,
+        "colors":
+         ['#EB0045','#244C5A','#7A303F','#AF7C83','#4E748B','#9BAEAB','#BFBFBF','#DAC3B7','#EFE5E4']
+    }
+]
 
 # THEME_OVERRIDES is used for adding custom theme to superset
 # example code for "My theme" custom scheme
@@ -606,7 +615,16 @@ THEME_OVERRIDES: Dict[str, Any] = {}
 #     }]
 
 # This is merely a default
-EXTRA_SEQUENTIAL_COLOR_SCHEMES: List[Dict[str, Any]] = []
+EXTRA_SEQUENTIAL_COLOR_SCHEMES: List[Dict[str, Any]] = [
+    {
+        "id": 'liqColours',
+        "description": '',
+        "label": 'LIQ Colours',
+        "isDefault": True,
+        "colors":
+         ['#EB0045','#244C5A','#7A303F','#AF7C83','#4E748B','#9BAEAB','#BFBFBF','#DAC3B7','#EFE5E4']
+    }
+]
 
 # ---------------------------------------------------
 # Thumbnail config (behind feature flag)
