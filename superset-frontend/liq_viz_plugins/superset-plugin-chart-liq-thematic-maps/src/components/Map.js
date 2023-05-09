@@ -184,6 +184,9 @@ function Map(props, ref) {
         setDrawerOpen(true);
       });
     });
+
+    dispersePoints();
+
   };
 
   const dispersePoints = () => {
@@ -191,23 +194,25 @@ function Map(props, ref) {
       const zoom = map.current.getZoom().toFixed(2);
       intranetLayers && intranetLayers.map(l => {
         if (['supermarkets', 'department_stores', 'discount_department_stores'].includes(l)) {
-          const getExpr = ['get', 'zoom'];
-          const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
-          const currFilter = [...map.current.getLayer(l).filter];
-          if (zoom < 9) {
-            currFilter[2] = makeFilter(0, 10); // third element of filter is disperse filter
-          } else if (zoom < 10) {
-            currFilter[2] = makeFilter(11, 12);
-          } else if (zoom < 11) {
-            currFilter[2] = makeFilter(12, 13);
-          } else if (zoom < 12) {
-            currFilter[2] = makeFilter(13, 14);
-          } else if (zoom < 13) {
-            currFilter[2] = makeFilter(14, 15);
-          } else {
-            currFilter[2] = ['==', getExpr, 15];
+          if ('filter' in map.current.getLayer(l)) {
+            const getExpr = ['get', 'zoom'];
+            const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
+            const currFilter = [...map.current.getLayer(l).filter];
+            if (zoom < 9) {
+              currFilter[2] = makeFilter(0, 10); // third element of filter is disperse filter
+            } else if (zoom < 10) {
+              currFilter[2] = makeFilter(11, 12);
+            } else if (zoom < 11) {
+              currFilter[2] = makeFilter(12, 13);
+            } else if (zoom < 12) {
+              currFilter[2] = makeFilter(13, 14);
+            } else if (zoom < 13) {
+              currFilter[2] = makeFilter(14, 15);
+            } else {
+              currFilter[2] = ['==', getExpr, 15];
+            }
+            map.current.setFilter(l, currFilter);
           }
-          map.current.setFilter(l, currFilter);
         }
       });
     }
@@ -229,7 +234,7 @@ function Map(props, ref) {
 
     map.current = new mapboxgl.Map({
       container: mapID,
-      style: mapStyle ? mapStyle : 'mapbox://styles/mapbox/streets-v12',
+      style: mapStyle ? mapStyle : 'mapbox://styles/mapbox/light-v11?optimize=true',
       center: mapPos.lng && mapPos.lat ? [mapPos.lng, mapPos.lat] : [151.2, -33.8],
       zoom: mapPos.zoom ? mapPos.zoom : 9
     });
@@ -403,6 +408,8 @@ function Map(props, ref) {
       loadIntranetLayers(intranetLayers ? intranetLayers : []);
       setRenderedIntranetLayers(intranetLayers ? [...intranetLayers] : []);
 
+      dispersePoints();
+
     });
 
     map.current.on('mousemove', 'boundary_tileset', (e) => {
@@ -482,6 +489,7 @@ function Map(props, ref) {
     });
 
     setMapLoaded(true);
+    dispersePoints();
   }
 
   useImperativeHandle(ref, () => ({
@@ -586,6 +594,7 @@ function Map(props, ref) {
     setDrawerOpen(false);
     loadIntranetLayers(intranetLayers);
     setRenderedIntranetLayers([...intranetLayers]);
+    dispersePoints();
   }, [intranetLayers])
 
   // Main map initialization hook
@@ -597,6 +606,7 @@ function Map(props, ref) {
   // Hook for styling rendered tiles via feature state, triggered whenever new tiles are rendered
   useEffect(() => {
     if (!load || !map.current.isStyleLoaded()) return;
+    dispersePoints();
     for (const i in currBdryIDs) {
       let state = {
         color: colorMap[currBdryIDs[i].val],

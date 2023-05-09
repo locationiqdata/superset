@@ -184,16 +184,16 @@ const config: ControlPanelConfig = {
             name: 'map_style',
             config: {
               type: 'SelectControl',
-              default: 'mapbox://styles/mapbox/streets-v12',
+              default: 'mapbox://styles/mapbox/light-v11?optimize=true',
               choices: [
-                ['mapbox://styles/mapbox/streets-v12', 'Streets'],
-                ['mapbox://styles/mapbox/outdoors-v12', 'Outdoors'],
-                ['mapbox://styles/mapbox/light-v11', 'Light'],
-                ['mapbox://styles/mapbox/dark-v11', 'Dark'],
-                ['mapbox://styles/mapbox/satellite-v9', 'Satellite'],
-                ['mapbox://styles/mapbox/satellite-streets-v12', 'Satellite Streets'],
-                ['mapbox://styles/mapbox/navigation-day-v1', 'Navigation Day'],
-                ['mapbox://styles/mapbox/navigation-night-v1', 'Navigation Night']
+                ['mapbox://styles/mapbox/streets-v12?optimize=true', 'Streets'],
+                ['mapbox://styles/mapbox/outdoors-v12?optimize=true', 'Outdoors'],
+                ['mapbox://styles/mapbox/light-v11?optimize=true', 'Light'],
+                ['mapbox://styles/mapbox/dark-v11?optimize=true', 'Dark'],
+                ['mapbox://styles/mapbox/satellite-v9?optimize=true', 'Satellite'],
+                ['mapbox://styles/mapbox/satellite-streets-v12?optimize=true', 'Satellite Streets'],
+                ['mapbox://styles/mapbox/navigation-day-v1?optimize=true', 'Navigation Day'],
+                ['mapbox://styles/mapbox/navigation-night-v1?optimize=true', 'Navigation Night']
               ],
               renderTrigger: true,
               label: t('Base Map Style')
