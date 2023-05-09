@@ -143,6 +143,16 @@ function Map(props, ref) {
 
   // Loads each layer in "layers" onto the map with the default intranet layer styling
   const loadIntranetLayers = (layers) => {
+    /*
+      For layer filter: 2nd element is always the legend filter expression and the last element
+      is always the zoom filter expression:
+
+      [
+        'all',
+        legendFilterExpr,
+        zoomFilterExpr
+      ]
+    */
     layers.forEach(l => {
       map.current.addLayer({
         'id': l,
@@ -152,7 +162,8 @@ function Map(props, ref) {
         'layout': {
           'icon-image': iconExprs[l],
           'icon-allow-overlap': true
-        }
+        },
+        'filter': ['all', true, true]
       });
       map.current.on('mouseenter', l, () => {
         map.current.getCanvas().style.cursor = 'pointer';
@@ -172,6 +183,33 @@ function Map(props, ref) {
         setDrawerOpen(true);
       });
     });
+  };
+
+  const dispersePoints = () => {
+    if (map.current.isStyleLoaded()) {
+      const zoom = map.current.getZoom().toFixed(2);
+      intranetLayers.map(l => {
+        if (['supermarkets', 'department_stores', 'discount_department_stores'].includes(l)) {
+          const getExpr = ['get', 'zoom'];
+          const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
+          const currFilter = [...map.current.getLayer(l).filter];
+          if (zoom < 9) {
+            currFilter[2] = makeFilter(0, 10); // third element of filter is disperse filter
+          } else if (zoom < 10) {
+            currFilter[2] = makeFilter(11, 12);
+          } else if (zoom < 11) {
+            currFilter[2] = makeFilter(12, 13);
+          } else if (zoom < 12) {
+            currFilter[2] = makeFilter(13, 14);
+          } else if (zoom < 13) {
+            currFilter[2] = makeFilter(14, 15);
+          } else {
+            currFilter[2] = ['==', getExpr, 15];
+          }
+          map.current.setFilter(l, currFilter);
+        }
+      });
+    }
   };
 
   /*
@@ -268,11 +306,19 @@ function Map(props, ref) {
     // Load map tiles and their default styles
     map.current.on('load', () => {
 
-      if (tradeAreas && tradeAreas.length > 0) map.current.flyTo({
-        center: taLoc,
-        zoom: 12,
-        essential: true
-      });
+      if (tradeAreas && tradeAreas.length > 0) {
+        map.current.flyTo({
+          center: taLoc,
+          zoom: 12,
+          essential: true
+        });
+      } else {
+        map.current.flyTo({
+          centre: [longitude, latitude],
+          zoom: zoom,
+          essential: true
+        });
+      } 
 
       map.current.addSource('boundary_tileset', {
         'type': 'vector',
@@ -411,6 +457,7 @@ function Map(props, ref) {
         zoom: zoom
       };
       setMapPos({ ...newMapPos });
+      dispersePoints();
     });
 
     // When the map reveices new tile data, get rendered tile features and store them in state for styling

@@ -5,6 +5,7 @@ export default class LiqMarker {
     this.strokeWidth = strokeWidth;
     this.strokeColor = strokeColor;
     this.fill = fill;
+    this.proposed_size = 5;
 
     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.svg.setAttribute("width", size);
@@ -91,10 +92,21 @@ export default class LiqMarker {
     circle.setAttribute("stroke-width", strokeWidth);
 
     if (proposed) {
-      this.addShadow();
-      circle.setAttribute('filter', 'url(#shadow)');
-      this.svg.appendChild(circle);
-      this.createCircle(this.size, 1, '#FFFFFF', 'none');
+      if (fill === 'none') {
+        circle.setAttribute('stroke-dasharray', '2 2');
+        circle.setAttribute('stroke-dashoset', '0');
+        this.svg.appendChild(circle);
+      } else {
+        this.addShadow();
+        circle.setAttribute('filter', 'url(#shadow)');
+        this.svg.appendChild(circle);
+        const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        propCircle.setAttribute("cx", size / 2);
+        propCircle.setAttribute("cy", size / 2);
+        propCircle.setAttribute("r", this.proposed_size / 2);
+        propCircle.setAttribute("fill", '#FFFFFF');
+        this.svg.appendChild(propCircle);
+      }
     } else {
       this.svg.appendChild(circle);
     }
@@ -123,7 +135,12 @@ export default class LiqMarker {
       this.addShadow();
       rect.setAttribute('filter', 'url(#shadow)');
       this.svg.appendChild(rect);
-      this.createSquare(this.size, 1, '#FFFFFF', 'none');
+      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      propCircle.setAttribute("cx", size / 2);
+      propCircle.setAttribute("cy", size / 2);
+      propCircle.setAttribute("r", this.proposed_size / 2);
+      propCircle.setAttribute("fill", '#FFFFFF');
+      this.svg.appendChild(propCircle);
     } else {
       this.svg.appendChild(rect);
     }
@@ -150,7 +167,12 @@ export default class LiqMarker {
       this.addShadow();
       star.setAttribute('filter', 'url(#shadow)');
       this.svg.appendChild(star);
-      this.createStar(this.size, 1, '#FFFFFF', 'none');
+      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      propCircle.setAttribute("cx", size / 2);
+      propCircle.setAttribute("cy", size / 2);
+      propCircle.setAttribute("r", this.proposed_size / 2);
+      propCircle.setAttribute("fill", '#FFFFFF');
+      this.svg.appendChild(propCircle);
     } else {
       this.svg.appendChild(star);
     }
@@ -177,7 +199,12 @@ export default class LiqMarker {
       this.addShadow();
       pentagon.setAttribute('filter', 'url(#shadow)');
       this.svg.appendChild(pentagon);
-      this.createStar(this.size, 1, '#FFFFFF', 'none');
+      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      propCircle.setAttribute("cx", size / 2);
+      propCircle.setAttribute("cy", size / 2);
+      propCircle.setAttribute("r", this.proposed_size / 2);
+      propCircle.setAttribute("fill", '#FFFFFF');
+      this.svg.appendChild(propCircle);
     } else {
       this.svg.appendChild(pentagon);
     }
@@ -204,7 +231,12 @@ export default class LiqMarker {
       this.addShadow();
       triangle.setAttribute('filter', 'url(#shadow)');
       this.svg.appendChild(triangle);
-      this.createStar(this.size, 1, '#FFFFFF', 'none');
+      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      propCircle.setAttribute("cx", size / 2);
+      propCircle.setAttribute("cy", size / 2);
+      propCircle.setAttribute("r", this.proposed_size / 2);
+      propCircle.setAttribute("fill", '#FFFFFF');
+      this.svg.appendChild(propCircle);
     } else {
       this.svg.appendChild(triangle);
     }
@@ -231,7 +263,12 @@ export default class LiqMarker {
       this.addShadow();
       poly.setAttribute('filter', 'url(#shadow)');
       this.svg.appendChild(poly);
-      this.createStar(this.size, 1, '#FFFFFF', 'none');
+      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      propCircle.setAttribute("cx", size / 2);
+      propCircle.setAttribute("cy", size / 2);
+      propCircle.setAttribute("r", this.proposed_size / 2);
+      propCircle.setAttribute("fill", '#FFFFFF');
+      this.svg.appendChild(propCircle);
     } else {
       this.svg.appendChild(poly);
     }
