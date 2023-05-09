@@ -194,7 +194,7 @@ function Map(props, ref) {
       const zoom = map.current.getZoom().toFixed(2);
       intranetLayers && intranetLayers.map(l => {
         if (['supermarkets', 'department_stores', 'discount_department_stores'].includes(l)) {
-          if (map.current.getLayer(l) && 'filter' in map.current.getLayer(l)) {
+          if (map.current.getLayer(l) && ('filter' in map.current.getLayer(l))) {
             const getExpr = ['get', 'zoom'];
             const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
             const currFilter = [...map.current.getLayer(l).filter];
