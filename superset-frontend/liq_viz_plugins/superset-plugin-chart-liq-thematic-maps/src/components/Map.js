@@ -163,7 +163,8 @@ function Map(props, ref) {
           'icon-image': iconExprs[l],
           'icon-allow-overlap': true
         },
-        'filter': ['all', true, true]
+        'filter': ['all', true, true],
+        'minzoom': 9
       });
       map.current.on('mouseenter', l, () => {
         map.current.getCanvas().style.cursor = 'pointer';
@@ -188,7 +189,7 @@ function Map(props, ref) {
   const dispersePoints = () => {
     if (map.current.isStyleLoaded()) {
       const zoom = map.current.getZoom().toFixed(2);
-      intranetLayers.map(l => {
+      intranetLayers && intranetLayers.map(l => {
         if (['supermarkets', 'department_stores', 'discount_department_stores'].includes(l)) {
           const getExpr = ['get', 'zoom'];
           const makeFilter = (lo, hi) => ['all', ['>=', getExpr, lo], ['<', getExpr, hi]];
@@ -312,13 +313,7 @@ function Map(props, ref) {
           zoom: 12,
           essential: true
         });
-      } else {
-        map.current.flyTo({
-          centre: [longitude, latitude],
-          zoom: zoom,
-          essential: true
-        });
-      } 
+      }
 
       map.current.addSource('boundary_tileset', {
         'type': 'vector',
