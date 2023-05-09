@@ -20,7 +20,6 @@ export default function DataDisplay(props) {
 
   // Need to add a key value for each data object which will just be its index
   useEffect(() => {
-    console.log(data);
     let nD = [];
     data.map((d, i) => {
       let row = {key: i};
