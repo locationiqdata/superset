@@ -92,15 +92,21 @@ export default class LiqMarker {
     circle.setAttribute("stroke-width", strokeWidth);
 
     if (proposed) {
-      this.addShadow();
-      circle.setAttribute('filter', 'url(#shadow)');
-      this.svg.appendChild(circle);
-      const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      propCircle.setAttribute("cx", size / 2);
-      propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size / 2);
-      propCircle.setAttribute("fill", '#FFFFFF');
-      this.svg.appendChild(propCircle);
+      if (fill === 'none') {
+        circle.setAttribute('stroke-dasharray', '2 2');
+        circle.setAttribute('stroke-dashoset', '0');
+        this.svg.appendChild(circle);
+      } else {
+        this.addShadow();
+        circle.setAttribute('filter', 'url(#shadow)');
+        this.svg.appendChild(circle);
+        const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        propCircle.setAttribute("cx", size / 2);
+        propCircle.setAttribute("cy", size / 2);
+        propCircle.setAttribute("r", this.proposed_size / 2);
+        propCircle.setAttribute("fill", '#FFFFFF');
+        this.svg.appendChild(propCircle);
+      }
     } else {
       this.svg.appendChild(circle);
     }
@@ -132,7 +138,7 @@ export default class LiqMarker {
       const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       propCircle.setAttribute("cx", size / 2);
       propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size);
+      propCircle.setAttribute("r", this.proposed_size / 2);
       propCircle.setAttribute("fill", '#FFFFFF');
       this.svg.appendChild(propCircle);
     } else {
@@ -164,7 +170,7 @@ export default class LiqMarker {
       const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       propCircle.setAttribute("cx", size / 2);
       propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size);
+      propCircle.setAttribute("r", this.proposed_size / 2);
       propCircle.setAttribute("fill", '#FFFFFF');
       this.svg.appendChild(propCircle);
     } else {
@@ -196,7 +202,7 @@ export default class LiqMarker {
       const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       propCircle.setAttribute("cx", size / 2);
       propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size);
+      propCircle.setAttribute("r", this.proposed_size / 2);
       propCircle.setAttribute("fill", '#FFFFFF');
       this.svg.appendChild(propCircle);
     } else {
@@ -228,7 +234,7 @@ export default class LiqMarker {
       const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       propCircle.setAttribute("cx", size / 2);
       propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size);
+      propCircle.setAttribute("r", this.proposed_size / 2);
       propCircle.setAttribute("fill", '#FFFFFF');
       this.svg.appendChild(propCircle);
     } else {
@@ -260,7 +266,7 @@ export default class LiqMarker {
       const propCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       propCircle.setAttribute("cx", size / 2);
       propCircle.setAttribute("cy", size / 2);
-      propCircle.setAttribute("r", this.proposed_size);
+      propCircle.setAttribute("r", this.proposed_size / 2);
       propCircle.setAttribute("fill", '#FFFFFF');
       this.svg.appendChild(propCircle);
     } else {

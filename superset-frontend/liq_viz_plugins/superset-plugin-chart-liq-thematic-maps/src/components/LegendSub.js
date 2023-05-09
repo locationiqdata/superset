@@ -33,11 +33,18 @@ export default function LegendSub(props) {
 
   const currHidden = useAppStore(state => state.legendHidden[index]);
   const updateLegendHiddenIndex = useAppStore(state => state.updateLegendHiddenIndex);
+  const disperseLayers = ['supermarkets', 'department_stores', 'discount_department_stores'];
 
   const updateMapFilter = (layer, hidden) => {
     if (!map) return;
     if (hidden.length === 0) {
-      map.setFilter(layer, null);
+      if (disperseLayers.includes(layer)) {
+        const currFilter = [...map.getLayer(layer).filter];
+        currFilter[1] = true; // second element of filter is legend filter
+        map.setFilter(layer, currFilter);
+      } else {
+        map.setFilter(layer, null);
+      }
       if ('textLayerFilterExpr' in config) map.setFilter(`${layer}_sector_labels`, ['==', ['get', 'centre'], layer]);
       if (config.outline) map.setFilter(`${layer}_outline`, null);
     } else {
@@ -47,7 +54,13 @@ export default function LegendSub(props) {
         filterExpr.push(config.filterExpr(layer, k));
         if ('textLayerFilterExpr' in config) textFilterExpr.push(config.textLayerFilterExpr(layer, k));
       }
-      map.setFilter(layer, filterExpr);
+      if (disperseLayers.includes(layer)) {
+        const currFilter = [...map.getLayer(layer).filter];
+        currFilter[1] = filterExpr; // second element of filter is legend filter
+        map.setFilter(layer, currFilter); 
+      } else {
+        map.setFilter(layer, filterExpr);
+      }
       if ('textLayerFilterExpr' in config) map.setFilter(`${layer}_sector_labels`, textFilterExpr);
       if (config.outline) map.setFilter(`${layer}_outline`, filterExpr);
     }
