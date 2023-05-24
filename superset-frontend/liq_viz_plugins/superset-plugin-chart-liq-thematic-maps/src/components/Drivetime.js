@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Radio, Form, InputNumber, Typography } from 'antd';
 import { refreshChart } from '../utils/overrides/chartActionOverride';
 import { useDispatch } from 'react-redux';
@@ -21,7 +21,8 @@ export default function Drivetime(props) {
     borderWidth,
     maps,
     sa1Color,
-    sa1Width
+    sa1Width,
+    setCursor
   } = props;
 
   const [travelMode, setTravelMode] = useState('driving'); // type of travel mode for isochrone
@@ -45,6 +46,7 @@ export default function Drivetime(props) {
   // Remove drivetime geojson source and layer and delete drivetime key url param
   const removeDrivetime = () => {
     maps.map(map => {
+      map.off('click', getDrivetime);
       if ('drivetime' in map.getStyle().sources) {
         map.removeLayer('drivetime');
         map.removeLayer('drivetime_sa1s');
@@ -99,6 +101,7 @@ export default function Drivetime(props) {
       });
       map.off('click', getDrivetime);
     });
+    setCursor('');
     setMessage('');
     addSA1s(drivetime);
     const url = new URL(window.location.href);
@@ -175,6 +178,7 @@ export default function Drivetime(props) {
 
   const onSettingsSave = () => {
     removeDrivetime();
+    setCursor('crosshair');
     maps.map(map => map.on('click', getDrivetime));
     setMessage('Click anywhere on the map');    
   }

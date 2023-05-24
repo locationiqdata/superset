@@ -91,7 +91,8 @@ function Map(props, ref) {
     setCmapLoaded,
     setMapLoaded,
     load,
-    loading
+    loading,
+    cursor
   } = props;
 
   const map = useRef(null);
@@ -688,6 +689,11 @@ function Map(props, ref) {
       });
     }
   }, [newIntersectSa1Color, intersectSa1Width])
+
+  // Hook for applying cursor change
+  useEffect(() => {
+    map.current.getCanvas().style.cursor = cursor
+  }, [cursor])
 
   return (
     <div 

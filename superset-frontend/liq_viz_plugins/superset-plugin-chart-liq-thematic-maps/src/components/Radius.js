@@ -3,7 +3,7 @@ import { Form, InputNumber, Button, Typography } from 'antd';
 import { refreshChart } from '../utils/overrides/chartActionOverride';
 import { useDispatch } from 'react-redux';
 import { SupersetClient } from '@superset-ui/core';
-import { mapKeys } from 'lodash';
+import { map, mapKeys } from 'lodash';
 
 const liqSecrets = require('../../../liq_secrets.js').liqSecrets;
 
@@ -25,7 +25,8 @@ export default function Radius(props) {
     radiusLinkedCharts,
     maps,
     sa1Color,
-    sa1Width
+    sa1Width,
+    setCursor
   } = props;
 
   const [distance, setDistance] = useState(5);
@@ -44,27 +45,12 @@ export default function Radius(props) {
     }
   }
 
-  // Remove radius geojson source and layer and delete radius key url param
-  const removeRadius = () => {
-    maps.map(map => {
-      if ('radius' in map.getStyle().sources) {
-        map.removeLayer('radius');
-        map.removeLayer('radius_sa1s');
-        map.removeLayer('radius-outline');
-        map.removeSource('radius');
-        const url = new URL(window.location.href);
-        url.searchParams.delete('radius_key');
-        window.history.replaceState(null, null, url);
-        refreshLinkedCharts();
-      }
-    })
-  }
-
   // Add radius geojson source and layer and update radius key url param
   const drawRadius = (e) => {
     const radius = getRadius([e.lngLat.lng, e.lngLat.lat], distance, 256);
     // add geojson source
     maps.map(map => {
+      map.off('click', drawRadius);
       map.addSource('radius', {
         'type': 'geojson',
         'data': radius
@@ -100,17 +86,34 @@ export default function Radius(props) {
           'line-width': parseFloat(sa1Width)
         }
       });
-      map.off('click', drawRadius);
-    })
-    setMessage('');
+    });
+    setCursor('');
     addSA1s(radius);
     const url = new URL(window.location.href);
     url.searchParams.set('radius_key', id);
     window.history.pushState(null, null, url);
   }
 
+  // Remove radius geojson source and layer and delete radius key url param
+  const removeRadius = () => {
+    maps.map(map => {
+      map.off('click', drawRadius);
+      if ('radius' in map.getStyle().sources) {
+        map.removeLayer('radius');
+        map.removeLayer('radius_sa1s');
+        map.removeLayer('radius-outline');
+        map.removeSource('radius');
+        const url = new URL(window.location.href);
+        url.searchParams.delete('radius_key');
+        window.history.replaceState(null, null, url);
+        refreshLinkedCharts();
+      }
+    });
+  }
+
   const onSettingsSave = () => {
     removeRadius();
+    setCursor('crosshair');
     maps.map(map => map.on('click', drawRadius));
     setMessage('Click anywhere on the map');    
   }

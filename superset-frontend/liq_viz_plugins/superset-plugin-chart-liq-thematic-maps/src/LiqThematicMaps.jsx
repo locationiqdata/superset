@@ -133,6 +133,8 @@ export default function LiqThematicMaps(props) {
 
   const [mapVis, setMapVis] = useState('left');
 
+  const [cursor, setCursor] = useState('');
+
   // Hook to update loading status
   useEffect(() => {
 
@@ -250,6 +252,8 @@ export default function LiqThematicMaps(props) {
                   radiusLinkedCharts={newRadiusLinkedCharts}
                   sa1Color={newIntersectSa1Color}
                   sa1Width={intersectSa1Width}
+                  setCursor={setCursor}
+                  cursor={cursor}
                 />
               );
               setDrawerOpen(true);
@@ -278,6 +282,8 @@ export default function LiqThematicMaps(props) {
                   drivetimeLinkedCharts={newDrivetimeLinkedCharts}
                   sa1Color={newIntersectSa1Color}
                   sa1Width={intersectSa1Width}
+                  setCursor={setCursor}
+                  cursor={cursor}
                 />
               );
               setDrawerOpen(true);
@@ -450,7 +456,8 @@ export default function LiqThematicMaps(props) {
             setCmapLoaded: (v) => {setCmapLoaded({...cmapLoaded, left: v})},
             setMapLoaded: (v) => {setMapsLoaded({...mapsLoaded, left: v})},
             load: true,
-            loading
+            loading,
+            cursor
           }} 
           ref={mapL} 
         />
@@ -467,7 +474,8 @@ export default function LiqThematicMaps(props) {
               setCmapLoaded: (v) => {setCmapLoaded({...cmapLoaded, right: v})},
               setMapLoaded: (v) => {setMapsLoaded({...mapsLoaded, right: v})},
               load: loadSecondMap,
-              loading
+              loading,
+              cursor
             }} 
             width={width}
             height={height}
