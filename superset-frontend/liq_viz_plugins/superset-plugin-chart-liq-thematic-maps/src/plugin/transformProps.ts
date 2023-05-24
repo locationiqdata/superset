@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { ChartProps } from '@superset-ui/core';
+import { ChartProps, AdhocMetric } from '@superset-ui/core';
 import { Feature, GeoJSON, LiqThematicMapsQueryFormData, RGBA, LiqMap, TASectorColour, TASectorCentroid, IntranetSchema, ThematicSchema } from '../types';
 
 const defaults = require('../defaultLayerStyles.js');
@@ -59,6 +59,7 @@ export default function transformProps(chartProps : ChartProps) {
   const { 
     mapType,
     mapStyle,
+    thematicColumn,
     boundary,
     intranetLayers, 
     features,
@@ -88,7 +89,11 @@ export default function transformProps(chartProps : ChartProps) {
   const data = queriesData[0].data;
   
   const groupCol = typeof formData.cols[0] === 'object' ? formData.cols[0].label : formData.cols[0];
-  const metricCol = formData.metric.constructor === Array ? formData.metric[0].label : formData.metric.label;
+  const metricCol = thematicColumn;
+  console.log(metricCol);
+  //const metricCol = formData.metric.constructor === Array ? formData.metric[0].label : formData.metric.label;
+
+  const metrics = formData.metric.map((m : AdhocMetric) => m.label);
 
   const isTradeArea = mapType.includes('trade_area');
   const isIntranet = mapType.includes('intranet');
@@ -101,8 +106,13 @@ export default function transformProps(chartProps : ChartProps) {
 
   let intranetData = {} as LiqMap<number, IntranetSchema>;
 
+  let indexedData = {} as LiqMap<string, LiqMap<string, number>>
+
   data.map((d : any) => {
+    if (!(d[groupCol] in indexedData)) indexedData[d[groupCol]] = {};
+    metrics.map((m : string) => indexedData[d[groupCol]][m] = d[m])
     if (isTradeArea) {
+
       if (!(d[groupCol] in tradeAreaSA1s)) tradeAreaSA1s[d[groupCol]] = {};
       if (!(d.Centre in tradeAreaSA1s[d[groupCol]])) tradeAreaSA1s[d[groupCol]][d.Centre] = {
         sector: d.Sector, colour: tradeAreaColors[d.Colour]
@@ -165,8 +175,10 @@ export default function transformProps(chartProps : ChartProps) {
     width,
     height,
     data,
+    indexedData,
     groupCol,
     metricCol,
+    metrics,
     // and now your control data, manipulated as needed, and passed through as props!
     mapType,
     mapStyle,

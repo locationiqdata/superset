@@ -55,8 +55,10 @@ mapboxgl.accessToken = liqSecrets.mapbox.accessToken;
 function Map(props, ref) {
   const {
     data, // from databricks/other databases
+    indexedData, // hashmap of data with group columns as index
     groupCol, // index col i.e. SA1 code, entity_id, etc.
     metricCol, // thematic col i.e. Population, a calculated column, GLA, etc.
+    metrics, // extra metric columns to show in a data display
     height,
     width,
     mapType, // type of map, can be one or more of thematic, trade_area and intranet
@@ -119,10 +121,13 @@ function Map(props, ref) {
     });
     let bdryIds = [];
     for (const d in bdry_features) {
+      const val = bdry_features[d].properties[groupCol]
       bdryIds.push({
         id: bdry_features[d].id,
-        val: bdry_features[d].properties[groupCol],
-        metric: bdry_features[d].properties[metricCol]
+        val: val,
+        properties: {
+          ...indexedData[val]
+        }
       });
     }
     return bdryIds;
@@ -488,6 +493,12 @@ function Map(props, ref) {
       setDrawerContent(<DataDisplay data={data} />);
       setDrawerOpen(true);
     });
+    map.current.on('click', 'boundary_tileset', (e) => {
+      const data = e.features.map(d => d.state.properties);
+      setDrawerTitle('Data');
+      setDrawerContent(<DataDisplay data={data} />);
+      setDrawerOpen(true);
+    });
 
     setMapLoaded(true);
     dispersePoints();
@@ -611,7 +622,7 @@ function Map(props, ref) {
     for (const i in currBdryIDs) {
       let state = {
         color: colorMap[currBdryIDs[i].val],
-        metric: currBdryIDs[i].metric
+        properties: currBdryIDs[i].properties
       }
       const taData = tradeAreaSA1s[currBdryIDs[i].val];
       if (taData) {

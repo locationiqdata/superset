@@ -70,8 +70,10 @@ mapboxgl.accessToken = liqSecrets.mapbox.accessToken;
 export default function LiqThematicMaps(props) {
   const { 
     data, // from databricks/other databases
+    indexedData, // hashmap of data with group columns as index
     groupCol, // index col i.e. SA1 code, entity_id, etc.
     metricCol, // thematic col i.e. Population, a calculated column, GLA, etc.
+    metrics, // extra metric columns to show in a data display
     height, 
     width, 
     mapType, // type of map, can be one or more of thematic, trade_area and intranet

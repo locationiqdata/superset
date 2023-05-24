@@ -22,7 +22,7 @@ import {
   legacyValidateInteger, 
   validateNumber,   
   getSequentialSchemeRegistry,
-  SequentialScheme 
+  AdhocMetric 
 } from '@superset-ui/core';
 import { 
   ControlPanelConfig, 
@@ -145,6 +145,8 @@ const config: ControlPanelConfig = {
               // it's possible to add validators to controls if
               // certain selections/types need to be enforced
               validators: [validateNonEmpty],
+              description: 'Metrics. If thematic: first metric will be used for thematic and the rest of the columns will show on the data display alongside first metric.',
+              multi: true
             },
           },
         ],
@@ -251,6 +253,22 @@ const config: ControlPanelConfig = {
       label: t('Thematic Settings'),
       expanded: false,
       controlSetRows: [
+        [
+          {
+            name: 'thematic_column',
+            config: {
+              type: 'SelectControl',
+              label: 'Thematic Column',
+              choices: [],
+              shouldMapStateToProps() { return true },
+              mapStateToProps(state : ControlPanelState) {
+                return {
+                  choices: state.controls.metric.value.map((v : AdhocMetric) => [v.label, v.label])
+                }
+              }
+            }
+          }
+        ],
         [
           {
             name: 'boundary',

@@ -29,7 +29,6 @@ export default function DataDisplay(props) {
       });
       nD.push(row);
     });
-    console.log(nD);
     setNewData([...nD]);
     setIsEmpty(data.length === 0);
   }, [data])
@@ -46,8 +45,8 @@ export default function DataDisplay(props) {
             bordered
             column={1}
           >
-            {Object.keys(d).map(o => !(o === 'key' || o === 'zoom') && (
-              <Descriptions.Item label={o}>{d[o]}</Descriptions.Item>
+            {Object.keys(d).map((o, i) => !(o === 'key' || o === 'zoom') && (
+              <Descriptions.Item label={o} key={i}>{d[o]}</Descriptions.Item>
             ))}
           </Descriptions>
           <Divider />
