@@ -494,7 +494,7 @@ function Map(props, ref) {
       setDrawerOpen(true);
     });
 
-    if (mapType.includes('thematic') || mapType.includes('trade_area')) {
+    if (mapType.includes('thematic')) {
       map.current.on('click', 'boundary_tileset', (e) => {
         const data = e.features.map(d => d.state.properties);
         setDrawerTitle('Data');
@@ -523,6 +523,8 @@ function Map(props, ref) {
   useEffect(() => {
 
     if (!load || !mapType.includes('thematic')) return;
+
+    if (!metricCol) return;
 
     setColorMap({});
 
