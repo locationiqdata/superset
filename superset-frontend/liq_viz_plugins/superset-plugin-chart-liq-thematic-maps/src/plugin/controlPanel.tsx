@@ -265,7 +265,8 @@ const config: ControlPanelConfig = {
                 return {
                   choices: state.controls.metric.value.map((v : AdhocMetric) => [v.label, v.label])
                 }
-              }
+              },
+              visibility: ({ controls } : ControlState) => Boolean(controls.map_type.value.includes('thematic'))
             }
           }
         ],

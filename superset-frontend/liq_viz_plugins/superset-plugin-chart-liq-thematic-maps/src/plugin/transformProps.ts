@@ -90,7 +90,6 @@ export default function transformProps(chartProps : ChartProps) {
   
   const groupCol = typeof formData.cols[0] === 'object' ? formData.cols[0].label : formData.cols[0];
   const metricCol = thematicColumn;
-  console.log(metricCol);
   //const metricCol = formData.metric.constructor === Array ? formData.metric[0].label : formData.metric.label;
 
   const metrics = formData.metric.map((m : AdhocMetric) => m.label);

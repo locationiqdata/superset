@@ -493,12 +493,15 @@ function Map(props, ref) {
       setDrawerContent(<DataDisplay data={data} />);
       setDrawerOpen(true);
     });
-    map.current.on('click', 'boundary_tileset', (e) => {
-      const data = e.features.map(d => d.state.properties);
-      setDrawerTitle('Data');
-      setDrawerContent(<DataDisplay data={data} />);
-      setDrawerOpen(true);
-    });
+
+    if (mapType.includes('thematic') || mapType.includes('trade_area')) {
+      map.current.on('click', 'boundary_tileset', (e) => {
+        const data = e.features.map(d => d.state.properties);
+        setDrawerTitle('Data');
+        setDrawerContent(<DataDisplay data={data} />);
+        setDrawerOpen(true);
+      });
+    }
 
     setMapLoaded(true);
     dispersePoints();
