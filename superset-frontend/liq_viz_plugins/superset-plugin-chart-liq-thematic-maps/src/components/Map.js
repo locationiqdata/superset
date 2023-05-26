@@ -25,6 +25,14 @@ import { getSequentialSchemeRegistry } from '@superset-ui/core';
 
 import entity from '../../../liq_data/entity.json';
 
+import department_stores from '../../../liq_data/retail_layers/department_stores.geojson';
+import discount_department_stores from '../../../liq_data/retail_layers/discount_department_stores.geojson';
+import large_format_retail from '../../../liq_data/retail_layers/large_format_retail.geojson';
+import liquor from '../../../liq_data/retail_layers/liquor.geojson';
+import mini_majors from '../../../liq_data/retail_layers/mini_majors.geojson';
+import shopping_centres from '../../../liq_data/retail_layers/shopping_centres.geojson';
+import supermarkets from '../../../liq_data/retail_layers/supermarkets.geojson';
+
 import DataDisplay from './DataDisplay';
 
 const defaults = require('../defaultLayerStyles.js');
@@ -34,6 +42,16 @@ const iconsSVG = require('../iconSVG.js');
 const liqSecrets = require('../../../liq_secrets.js').liqSecrets;
 const layerStyles = defaults.defaultLayerStyles;
 const iconExprs = defaults.iconExprs;
+
+const RetailJsonMap = {
+  'shopping_centres': shopping_centres,
+  'department_stores': department_stores,
+  'discount_department_stores': discount_department_stores,
+  'large_format_retail': large_format_retail,
+  'mini_majors': mini_majors,
+  'liquor': liquor,
+  'supermarkets': supermarkets
+}
 
 mapboxgl.accessToken = liqSecrets.mapbox.accessToken;
 
@@ -163,8 +181,7 @@ function Map(props, ref) {
       map.current.addLayer({
         'id': l,
         'type': 'symbol',
-        'source': 'intranet_tileset',
-        'source-layer': l,
+        'source': l,
         'layout': {
           'icon-image': iconExprs[l],
           'icon-allow-overlap': true
@@ -207,15 +224,19 @@ function Map(props, ref) {
             if (zoom < 9) {
               currFilter[2] = makeFilter(0, 10); // third element of filter is disperse filter
             } else if (zoom < 10) {
-              currFilter[2] = makeFilter(11, 12);
+              currFilter[2] = makeFilter(10, 11);
             } else if (zoom < 11) {
-              currFilter[2] = makeFilter(12, 13);
+              currFilter[2] = makeFilter(11, 12);
             } else if (zoom < 12) {
-              currFilter[2] = makeFilter(13, 14);
+              currFilter[2] = makeFilter(12, 13);
             } else if (zoom < 13) {
+              currFilter[2] = makeFilter(13, 14);
+            } else if (zoom < 14) {
               currFilter[2] = makeFilter(14, 15);
+            } else if (zoom < 15) {
+              currFilter[2] = makeFilter(15, 16);
             } else {
-              currFilter[2] = ['==', getExpr, 15];
+              currFilter[2] = ['==', getExpr, 16];
             }
             map.current.setFilter(l, currFilter);
           }
@@ -325,6 +346,13 @@ function Map(props, ref) {
           essential: true
         });
       }
+
+      Object.keys(RetailJsonMap).map(l => {
+        map.current.addSource(l, {
+          'type': 'geojson',
+          'data': RetailJsonMap[l]
+        });
+      });
 
       map.current.addSource('boundary_tileset', {
         'type': 'vector',
