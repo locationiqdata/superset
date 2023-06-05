@@ -156,6 +156,14 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "celery inspect ping -A superset.tasks.celery_app:app -d celery@$$HOSTNAME"]
 
+  liq-dev-env:
+    build: ./liq_dev
+    container_name: liq_dev_env
+    volumes:
+      - C:/Users/david.kirkland/Git/superset:/app
+    working_dir: /app
+    tty: true
+
 volumes:
   superset_home:
     external: false

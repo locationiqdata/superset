@@ -32,12 +32,21 @@ npm install -f --no-optional
 
 echo "Running liq viz plugins"
 
+cd ./liq_viz_plugins/superset-plugin-chart-hello-world
+# Comment below before merging master for prod
+npm run dev # Dev
+# Uncomment below before merging master for prod
+# npm install --force
+# npm run build-only # Prod
+
 cd ./liq_viz_plugins/superset-plugin-chart-liq-thematic-maps
 # Comment below before merging master for prod
 # npm run dev & # Dev
 # Uncomment below before merging master for prod
 npm install --force
 npm run build-only # Prod
+
+
 
 cd ../../
 
