@@ -34,12 +34,12 @@ echo "Running liq viz plugins"
 
 cd ./liq_viz_plugins/superset-plugin-chart-hello-world
 # Comment below before merging master for prod
-npm run dev # Dev
+npm run dev & # Dev
 # Uncomment below before merging master for prod
 # npm install --force
 # npm run build-only # Prod
 
-cd ./liq_viz_plugins/superset-plugin-chart-liq-thematic-maps
+cd ../superset-plugin-chart-liq-thematic-maps
 # Comment below before merging master for prod
 # npm run dev & # Dev
 # Uncomment below before merging master for prod
@@ -53,4 +53,4 @@ cd ../../
 npm cache clean -f
 
 echo "Running frontend"
-npm run build-dev
+npm run dev
