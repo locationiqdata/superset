@@ -108,7 +108,9 @@ export default function LiqThematicMaps(props) {
     newDrivetimeLinkedCharts, // chart ids to update in dashboard when drivetime is updated
     newIntersectSa1Color,
     intersectSa1Width,
-    compareChart
+    compareChart,
+    customLayers,
+    customLegends
   } = props;
 
   const rootElem = createRef();
@@ -212,6 +214,7 @@ export default function LiqThematicMaps(props) {
                   colorMap: reverseMap,
                   thematicCol: parentProps.metricCol,
                   groupCol: parentProps.groupCol,
+                  customData: parentProps.customLegends,
                   map: mapMap[map].current.getMap()
                 });
               })

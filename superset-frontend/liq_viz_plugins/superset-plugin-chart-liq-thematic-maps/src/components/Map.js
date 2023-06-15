@@ -104,6 +104,7 @@ function Map(props, ref) {
     drivetimeBorderWidth, // stroke width of drivetime border
     newIntersectSa1Color,
     intersectSa1Width,
+    customLayers,
     mapID, // id of map,
     setDrawerOpen,
     setDrawerContent,
@@ -351,6 +352,34 @@ function Map(props, ref) {
         map.current.addSource(l, {
           'type': 'geojson',
           'data': RetailJsonMap[l]
+        });
+      });
+
+      Object.keys(customLayers).map(l => {
+        map.current.addSource(l, {
+          'type': 'geojson',
+          'data': customLayers[l].geojson
+        });
+
+        map.current.addLayer({
+          'id': l,
+          'source': l,
+          'filter': ['all', true, true],
+          ...customLayers[l].style
+        });
+
+        map.current.on('mouseenter', l, () => {
+          map.current.getCanvas().style.cursor = 'pointer';
+        });
+        map.current.on('mouseleave', l, () => {
+          map.current.getCanvas().style.cursor = '';
+        });
+        map.current.on('click', l, (e) => {
+          const data = [];
+          e.features.map(d => data.push(d.properties));
+          setDrawerTitle('Data');
+          setDrawerContent(<DataDisplay data={data} />);
+          setDrawerOpen(true);
         });
       });
 

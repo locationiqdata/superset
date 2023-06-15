@@ -9,7 +9,7 @@ const iconsSVG = require('../iconSVG.js');
 const defaults = require('../defaultLayerStyles.js');
 const intranetLegendExprs = defaults.intranetLegendExprs;
 
-const ERRORMARKER = LiqMarker(25, 1, '#000000', 'none').createCircle().img;
+const ERRORMARKER = new LiqMarker(25, 1, '#000000', 'none').createCircle().img;
 
 // Map tile layer names to a more human readable format
 const nameMap = {
@@ -126,7 +126,7 @@ function createAvatar(expr) {
     const size = parseInt(split[1]);
     const color = split[2];
     if (SHAPES.includes(shape) && size) {
-      const s = LiqMarker(size, 1, color, color);
+      const s = new LiqMarker(size, 1, color, color);
       if (shape === 'circle') return s.createCircle().img;
       if (shape === 'square') return s.createSquare().img;
       if (shape === 'triangle') return s.createTriangle().img;
@@ -148,6 +148,7 @@ export default function Legend(props) {
     tradeAreas, // list of trade area names rendered on the map
     taSectorSA1Map,
     taSectorColorMap,
+    customData,
     map
   } = props;
 
@@ -169,21 +170,17 @@ export default function Legend(props) {
   // Function to instnatiate custom legend config
   const customLegendData = (customData) => {
     return {
-      header: customData.header,
-      panelHeaders: customData.panelHeaders,
-      init: customData.init,
-      layers: customData.layers,
-      listData: Object.fromEntries(
-        Object.keys(customData.listData).map(l => customData.listData[l].map(d => {
-          return {
-            title: d.title,
-            desc: d.desc,
-            avatar: createAvatar(d.avatar),
-            hide: d.hide
-          }
-        }))
-      ),
-      filterExpr: (l, k) => customData.filterExpr[l][k]
+      header: 'Custom',
+      panelHeaders: Object.keys(customData),
+      init: Object.fromEntries(Object.keys(customData).map(l => [l, []])),
+      layers: Object.fromEntries(Object.keys(customData).map(l => [l, customData[l].labels])),
+      listData: Object.fromEntries(Object.keys(customData).map(l => [l, customData[l].listData.map(d => {
+        return {
+          ...d,
+          avatar: <img src={createAvatar(d.avatar).src} />
+        }
+      })])),
+      filterExpr: (l, k) => customData[l].filterExpr[k]
     }
   }
 
@@ -279,6 +276,12 @@ export default function Legend(props) {
       const cfg = treadeAreaLegendData(tradeAreas, taSectorSA1Map, taSectorColorMap, groupCol);
       newConfigs.push(cfg);
       newHidden.push(cfg.init);
+    }
+    if (customData) {
+      const cfg = customLegendData(customData);
+      newConfigs.push(cfg);
+      newHidden.push(cfg.init);
+      console.log(cfg);
     }
     setConfigs([...newConfigs]);
 

@@ -79,6 +79,25 @@ export interface ThematicSchema {
   lat: number
 }
 
+export interface CustomLegendListData {
+  title: string,
+  desc: string,
+  avatar: string,
+  hide: string
+}
+
+export interface CustomLegend {
+  labels: string[],
+  listData: CustomLegendListData[],
+  filterExpr: Record<string, any>
+}
+
+export interface CustomLayers {
+  legend: CustomLegend,
+  geojson: GeoJSON,
+  style: any
+}
+
 interface LiqThematicMapsCustomizeProps {
   boundary?: string;
   breaksMode?: string;

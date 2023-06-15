@@ -168,10 +168,11 @@ const config: ControlPanelConfig = {
               choices: [
                 ['thematic', 'Thematic'],
                 ['trade_area', 'Trade Area'],
-                ['intranet', 'Intranet']
+                ['intranet', 'Intranet'],
+                ['custom', 'Custom']
               ],
               label: t('Map Type'),
-              description: t('What the dataset is for, i.e. the socios dataset would fall under Thematic or a dataset with entity_ids will fill under intranet.')
+              description: t('What the dataset is for, i.e. the socios dataset would fall under Thematic or a dataset with entity_ids will fall under intranet.')
             }
           },
         ]

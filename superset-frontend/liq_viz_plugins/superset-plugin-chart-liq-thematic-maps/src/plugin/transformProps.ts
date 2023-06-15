@@ -18,7 +18,7 @@
  */
 
 import { ChartProps, AdhocMetric } from '@superset-ui/core';
-import { Feature, GeoJSON, LiqThematicMapsQueryFormData, RGBA, LiqMap, TASectorColour, TASectorCentroid, IntranetSchema, ThematicSchema } from '../types';
+import { Feature, GeoJSON, LiqThematicMapsQueryFormData, RGBA, LiqMap, TASectorColour, TASectorCentroid, IntranetSchema, CustomLayers, CustomLegend } from '../types';
 
 const defaults = require('../defaultLayerStyles.js');
 const tradeAreaColors = defaults.tradeAreaColors;
@@ -96,6 +96,7 @@ export default function transformProps(chartProps : ChartProps) {
 
   const isTradeArea = mapType.includes('trade_area');
   const isIntranet = mapType.includes('intranet');
+  const isCustom = mapType.includes('custom');
 
   const tradeAreas = isTradeArea ? Array.from(new Set(data.map((d : any) => d.Centre))) : [];
   let tradeAreaSA1s = {} as LiqMap<string, TASectorColour>;
@@ -106,6 +107,11 @@ export default function transformProps(chartProps : ChartProps) {
   let intranetData = {} as LiqMap<number, IntranetSchema>;
 
   let indexedData = {} as LiqMap<string, LiqMap<string, number>>
+
+  let customLayers = {} as Record<string, CustomLayers>;
+  let customLegends = {} as Record<string, CustomLegend>;
+
+  console.log(data);
 
   data.map((d : any) => {
     if (!(d[groupCol] in indexedData)) indexedData[d[groupCol]] = {};
@@ -136,6 +142,18 @@ export default function transformProps(chartProps : ChartProps) {
         if (!(k === 'Layer' || k === groupCol || k == metricCol)) data[k] = d[k]
       })
       intranetData[d['Layer']][d[groupCol]] = data;
+    }
+    if (isCustom) {
+      if (!(d['layer'] in customLayers)) {
+        customLayers[d['layer']] = {
+          legend: JSON.parse(d['legend']),
+          geojson: JSON.parse(d['geojson']),
+          style: JSON.parse(d['style'])
+        };
+      }
+      if (!(d['layer'] in customLegends)) {
+        customLegends[d['layer']] = JSON.parse(d['legend']);
+      }
     }
   });
 
@@ -211,6 +229,8 @@ export default function transformProps(chartProps : ChartProps) {
     newDrivetimeLinkedCharts,
     newIntersectSa1Color,
     intersectSa1Width,
-    compareChart
+    compareChart,
+    customLayers,
+    customLegends
   };
 }
