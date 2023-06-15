@@ -626,6 +626,37 @@ const config: ControlPanelConfig = {
           }
         ]
       ]
+    },
+    {
+      label: t('Custom Layers'),
+      expanded: false,
+      controlSetRows: [
+        [
+          {
+            name: 'custom_layers',
+            config: {
+              type: 'SelectAsyncControl',
+              multi: false,
+              renderTrigger: false,
+              label: t('Chart'),
+              default: -1,
+              dataEndpoint:
+                '/api/v1/chart/?q=(filters:!((col:viz_type,opr:eq,value:ext-liq-maps)))',
+              placeholder: t('Select chart'),
+              onAsyncErrorMessage: t('Error while fetching charts'),
+              mutator: (data? : Data) => {
+                if (!data || !data.result) {
+                  return [];
+                }
+                return [{value: -1, label: 'None'}, ...data.result.map(o => ({
+                  value: o.id,
+                  label: o.slice_name
+                }))];
+              }
+            },
+          }
+        ]
+      ]
     }
   ],
   controlOverrides: {
