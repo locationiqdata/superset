@@ -3,9 +3,13 @@ import LegendSub from './LegendSub.js';
 
 import { useAppStore } from '../store/appStore';
 
+import LiqMarker from '../liqMarker.js';
+
 const iconsSVG = require('../iconSVG.js');
 const defaults = require('../defaultLayerStyles.js');
 const intranetLegendExprs = defaults.intranetLegendExprs;
+
+const ERRORMARKER = LiqMarker(25, 1, '#000000', 'none').createCircle().img;
 
 // Map tile layer names to a more human readable format
 const nameMap = {
@@ -112,6 +116,27 @@ const intranetLegend = {
   ]
 };
 
+const SHAPES = ['circle', 'square', 'triangle', 'star']
+
+// expr of format [shape] [size] [hex] e.g. red circle of size 25px would be the expression "circle 25 #880808"
+function createAvatar(expr) {
+  const split = expr.split(' ');
+  if (split.length == 3) {
+    const shape = split[0];
+    const size = parseInt(split[1]);
+    const color = split[2];
+    if (SHAPES.includes(shape) && size) {
+      const s = LiqMarker(size, 1, color, color);
+      if (shape === 'circle') return s.createCircle().img;
+      if (shape === 'square') return s.createSquare().img;
+      if (shape === 'triangle') return s.createTriangle().img;
+      return s.createStar().img;
+    }
+    return ERRORMARKER
+  }
+  return ERRORMARKER
+}
+
 export default function Legend(props) {
   
   const {
@@ -130,6 +155,37 @@ export default function Legend(props) {
   const currHidden = useAppStore(state => state.legendHidden);
 
   const updateLegendHiddenAll = useAppStore(state => state.updateLegendHiddenAll);
+
+  /*
+    Legend config structure:
+      header: heading that appears at the top divider
+      panelHeaders: list of headings for the various layers forming the legend entry
+      init: object with each layer as a key with the values representing the layer hidden
+      layers: object with each layer as a key with the values representing the layer display names
+      listData: list of objects representing what shows in the legend with properties: title, desc, avatar and hide
+      filterExpr: function that takes a layer and key as input and maps it to a Mapbox filter expression that will hide those entries on the map
+  */
+
+  // Function to instnatiate custom legend config
+  const customLegendData = (customData) => {
+    return {
+      header: customData.header,
+      panelHeaders: customData.panelHeaders,
+      init: customData.init,
+      layers: customData.layers,
+      listData: Object.fromEntries(
+        Object.keys(customData.listData).map(l => customData.listData[l].map(d => {
+          return {
+            title: d.title,
+            desc: d.desc,
+            avatar: createAvatar(d.avatar),
+            hide: d.hide
+          }
+        }))
+      ),
+      filterExpr: (l, k) => customData.filterExpr[l][k]
+    }
+  }
 
   // Function to instantiate thematic legend config
   const thematicLegendData = (thematicData, thematicCol, colorMap, groupCol) => {
@@ -217,6 +273,7 @@ export default function Legend(props) {
       const cfg = intranetLegendData(intranetLayers);
       newConfigs.push(cfg);
       newHidden.push(cfg.init);
+      console.log(cfg);
     } 
     if (tradeAreas && tradeAreas.length > 0) {
       const cfg = treadeAreaLegendData(tradeAreas, taSectorSA1Map, taSectorColorMap, groupCol);

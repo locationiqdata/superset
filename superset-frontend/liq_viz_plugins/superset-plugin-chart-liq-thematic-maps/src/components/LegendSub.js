@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Collapse, Divider, List, Avatar, Button, Typography } from 'antd';
 import {
   EyeOutlined,
