@@ -628,12 +628,12 @@ const config: ControlPanelConfig = {
       ]
     },
     {
-      label: t('Custom Layers'),
+      label: t('Custom Chart'),
       expanded: false,
       controlSetRows: [
         [
           {
-            name: 'custom_layers',
+            name: 'custom_chart',
             config: {
               type: 'SelectAsyncControl',
               multi: false,

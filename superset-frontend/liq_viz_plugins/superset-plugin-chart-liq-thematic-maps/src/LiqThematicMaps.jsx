@@ -109,6 +109,7 @@ export default function LiqThematicMaps(props) {
     newIntersectSa1Color,
     intersectSa1Width,
     compareChart,
+    customChart,
     customLayers,
     customLegends
   } = props;
@@ -122,14 +123,18 @@ export default function LiqThematicMaps(props) {
   const [compareData, setCompareData] = useState([]);
   const [transformedProps, setTransformedProps] = useState({});
 
+  const [customProps, setCustomProps] = useState({});
+  const [customData, setCustomData] = useState([]);
+  const [transformedCustomProps, setTransformedCustomProps] = useState({});
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerContent, setDrawerContent] = useState(<></>);
   const [drawerTitle, setDrawerTitle] = useState('');
 
   const [loadSecondMap, setLoadSecondMap] = useState(false);
   const [cmapLoaded, setCmapLoaded] = useState({ left: false, right: false });
-
   const [mapsLoaded, setMapsLoaded] = useState({ left: false, right: false });
+  const [customLoaded, setCustomLoaded] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -205,6 +210,7 @@ export default function LiqThematicMaps(props) {
                   }
                 });
                 const parentProps = map === 'left' ? props : transformedProps;
+                parentProps.customLegends = {...parentProps.customLegends, ...transformedCustomProps.customLegends};
                 legendProps.push({
                   intranetLayers: parentProps.intranetLayers,
                   tradeAreas: parentProps.tradeAreas,
@@ -297,22 +303,31 @@ export default function LiqThematicMaps(props) {
         ]
       }
     ])
-  }, [mapsLoaded, compareChart, mapVis]);
+  }, [mapsLoaded, customLoaded, compareChart, mapVis]);
+
+  const setExternalChart = (chartId, setProps, setData) => {
+    if (!(chartId && ((typeof chartId === 'number' && !(chartId === -1)) || typeof chartId === 'string'))) return;
+    SupersetClient.get({ endpoint: `/api/v1/chart/${chartId}` })
+      .then(res => {
+        if ('result' in res.json) {
+          setProps(JSON.parse(res.json.result.params));
+          SupersetClient.get({ endpoint: `/api/v1/chart/${chartId}/data` })
+            .then(res => {
+              if ('result' in res.json) setData(res.json.result[0].data);
+            });
+        }
+      });   
+  }
 
   // If there is a compare chart, load its initial props and data and store in state
   useEffect(() => {
-    if (!(compareChart && ((typeof compareChart === 'number' && !(compareChart === -1)) || typeof compareChart === 'string'))) return;
-    SupersetClient.get({ endpoint: `/api/v1/chart/${compareChart}` })
-      .then(res => {
-        if ('result' in res.json) {
-          setCompareProps(JSON.parse(res.json.result.params));
-          SupersetClient.get({ endpoint: `/api/v1/chart/${compareChart}/data` })
-            .then(res => {
-              if ('result' in res.json) setCompareData(res.json.result[0].data);
-            });
-        }
-      });
+    setExternalChart(compareChart, setCompareProps, setCompareData);
   }, [compareChart, data]);
+
+  // If there is a custom chart, load its initial props and data and store in state
+  useEffect(() => {
+    setExternalChart(customChart, setCustomProps, setCustomData);
+  }, [customChart, data]);
 
   // Apply transform props to initial right map props when they are received
   useEffect(() => {
@@ -343,6 +358,16 @@ export default function LiqThematicMaps(props) {
       setLoadSecondMap(true);
     }
   }, [compareProps, compareData]);
+
+  // Apply transform props to custom chart data when they are received
+  useEffect(() => {
+    if (Object.keys(customProps).length > 0 && customData.length > 0) {
+      const propsToCamel = _.mapKeys(compareProps, (v, k) => _.camelCase(k));
+      const newProps = transformProps( {width: width, height: height, formData: propsToCamel, queriesData: [{ data: compareData }]});
+      setTransformedCustomProps({...newProps});
+      setCustomLoaded(true);
+    }
+  }, [customProps, customData])
 
   const slideHandler = (e) => {
     const slidePos = e.currentPosition;
@@ -451,7 +476,8 @@ export default function LiqThematicMaps(props) {
       >
         <Map 
           {...{
-            ...props, 
+            ...props,
+            customLayers: Object.keys(transformedCustomProps).length > 0 ? {...customLayers, ...transformedCustomProps.customLayers} : customLayers, 
             mapID: 'left',
             width: loading ? 0 : width, 
             height: loading ? 0 : height,

@@ -83,7 +83,8 @@ export default function transformProps(chartProps : ChartProps) {
     drivetimeLinkedCharts,
     intersectSa1Color,
     intersectSa1Width,
-    compareChart
+    compareChart,
+    customChart
   } = formData as LiqThematicMapsQueryFormData;
 
   const data = queriesData[0].data;
@@ -92,7 +93,7 @@ export default function transformProps(chartProps : ChartProps) {
   const metricCol = thematicColumn;
   //const metricCol = formData.metric.constructor === Array ? formData.metric[0].label : formData.metric.label;
 
-  const metrics = formData.metric.map((m : AdhocMetric) => m.label);
+  const metrics = formData.metric.constructor === Array ? formData.metric.map((m : AdhocMetric) => m.label) : [formData.metric.label];
 
   const isTradeArea = mapType.includes('trade_area');
   const isIntranet = mapType.includes('intranet');
@@ -110,8 +111,6 @@ export default function transformProps(chartProps : ChartProps) {
 
   let customLayers = {} as Record<string, CustomLayers>;
   let customLegends = {} as Record<string, CustomLegend>;
-
-  console.log(data);
 
   data.map((d : any) => {
     if (!(d[groupCol] in indexedData)) indexedData[d[groupCol]] = {};
@@ -230,6 +229,7 @@ export default function transformProps(chartProps : ChartProps) {
     newIntersectSa1Color,
     intersectSa1Width,
     compareChart,
+    customChart,
     customLayers,
     customLegends
   };
