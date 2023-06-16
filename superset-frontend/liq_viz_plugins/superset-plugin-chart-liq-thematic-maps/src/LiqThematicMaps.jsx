@@ -209,8 +209,13 @@ export default function LiqThematicMaps(props) {
                     reverseMap[cmap[x]] = [x];
                   }
                 });
-                const parentProps = map === 'left' ? props : transformedProps;
-                parentProps.customLegends = {...parentProps.customLegends, ...transformedCustomProps.customLegends};
+                const parentProps = map === 'left' ? 
+                  'customLegends' in transformedCustomProps ?
+                    {...props, customLegends: {...props.customLegends, ...transformedCustomProps.customLegends}}
+                  :
+                    props 
+                : 
+                  transformedProps;
                 legendProps.push({
                   intranetLayers: parentProps.intranetLayers,
                   tradeAreas: parentProps.tradeAreas,
@@ -362,8 +367,8 @@ export default function LiqThematicMaps(props) {
   // Apply transform props to custom chart data when they are received
   useEffect(() => {
     if (Object.keys(customProps).length > 0 && customData.length > 0) {
-      const propsToCamel = _.mapKeys(compareProps, (v, k) => _.camelCase(k));
-      const newProps = transformProps( {width: width, height: height, formData: propsToCamel, queriesData: [{ data: compareData }]});
+      const propsToCamel = _.mapKeys(customProps, (v, k) => _.camelCase(k));
+      const newProps = transformProps( {width: width, height: height, formData: propsToCamel, queriesData: [{ data: customData }]});
       setTransformedCustomProps({...newProps});
       setCustomLoaded(true);
     }
@@ -477,7 +482,7 @@ export default function LiqThematicMaps(props) {
         <Map 
           {...{
             ...props,
-            customLayers: Object.keys(transformedCustomProps).length > 0 ? {...customLayers, ...transformedCustomProps.customLayers} : customLayers, 
+            customLayers: 'customLayers' in transformedCustomProps ? {...customLayers, ...transformedCustomProps.customLayers} : customLayers, 
             mapID: 'left',
             width: loading ? 0 : width, 
             height: loading ? 0 : height,

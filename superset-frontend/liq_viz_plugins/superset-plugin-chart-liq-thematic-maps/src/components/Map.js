@@ -79,7 +79,7 @@ function Map(props, ref) {
     metrics, // extra metric columns to show in a data display
     height,
     width,
-    mapType, // type of map, can be one or more of thematic, trade_area and intranet
+    mapType, // type of map, can be one or more of thematic, trade_area, intranet and custom
     mapStyle, // Mapbox "base map" style, i.e. Streets, Light, etc.
     boundary, // boundary layer for the map, i.e. SA1, POA, etc.
     intranetLayers, // list of intranet layers, i.e. shopping centres, supermarkets, etc.
@@ -164,6 +164,38 @@ function Map(props, ref) {
       }
     }
     return matchingFeatures;
+  }
+
+  // Loads custom layers
+  const loadCustomLayers = (layers) => {
+    Object.keys(layers).map(l => {
+      if (map.current.getLayer(l)) return;
+      map.current.addSource(l, {
+        'type': 'geojson',
+        'data': layers[l].geojson
+      });
+
+      map.current.addLayer({
+        'id': l,
+        'source': l,
+        'filter': ['all', true, true],
+        ...layers[l].style
+      });
+
+      map.current.on('mouseenter', l, () => {
+        map.current.getCanvas().style.cursor = 'pointer';
+      });
+      map.current.on('mouseleave', l, () => {
+        map.current.getCanvas().style.cursor = '';
+      });
+      map.current.on('click', l, (e) => {
+        const data = [];
+        e.features.map(d => data.push(d.properties));
+        setDrawerTitle('Data');
+        setDrawerContent(<DataDisplay data={data} />);
+        setDrawerOpen(true);
+      });
+    });
   }
 
   // Loads each layer in "layers" onto the map with the default intranet layer styling
@@ -355,34 +387,6 @@ function Map(props, ref) {
         });
       });
 
-      Object.keys(customLayers).map(l => {
-        map.current.addSource(l, {
-          'type': 'geojson',
-          'data': customLayers[l].geojson
-        });
-
-        map.current.addLayer({
-          'id': l,
-          'source': l,
-          'filter': ['all', true, true],
-          ...customLayers[l].style
-        });
-
-        map.current.on('mouseenter', l, () => {
-          map.current.getCanvas().style.cursor = 'pointer';
-        });
-        map.current.on('mouseleave', l, () => {
-          map.current.getCanvas().style.cursor = '';
-        });
-        map.current.on('click', l, (e) => {
-          const data = [];
-          e.features.map(d => data.push(d.properties));
-          setDrawerTitle('Data');
-          setDrawerContent(<DataDisplay data={data} />);
-          setDrawerOpen(true);
-        });
-      });
-
       map.current.addSource('boundary_tileset', {
         'type': 'vector',
         'url': liqSecrets.mapbox.tilesets.boundary
@@ -468,6 +472,7 @@ function Map(props, ref) {
         })
       }
 
+      loadCustomLayers(customLayers ? customLayers : {});
       loadIntranetLayers(intranetLayers ? intranetLayers : []);
       setRenderedIntranetLayers(intranetLayers ? [...intranetLayers] : []);
 
@@ -670,6 +675,12 @@ function Map(props, ref) {
     setRenderedIntranetLayers([...intranetLayers]);
     dispersePoints();
   }, [intranetLayers])
+
+  // Render custom layers
+  useEffect(() => {
+    if (!map.current) return;
+    loadCustomLayers(customLayers);
+  }, [customLayers]);
 
   // Main map initialization hook
   useEffect(() => {

@@ -44,9 +44,10 @@ export default function DataDisplay(props) {
             key={i}
             bordered
             column={1}
+            size='small'
           >
             {Object.keys(d).map((o, i) => !(o === 'key' || o === 'zoom') && (
-              <Descriptions.Item label={o} key={i}>{d[o]}</Descriptions.Item>
+              <Descriptions.Item label={o} key={i} labelStyle={{width: '50%'}} contentStyle={{width: '50%'}}>{d[o]}</Descriptions.Item>
             ))}
           </Descriptions>
           <Divider />

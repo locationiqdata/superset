@@ -277,7 +277,7 @@ export default function Legend(props) {
       newConfigs.push(cfg);
       newHidden.push(cfg.init);
     }
-    if (customData) {
+    if (customData && Object.keys(customData).length > 0) {
       const cfg = customLegendData(customData);
       newConfigs.push(cfg);
       newHidden.push(cfg.init);
