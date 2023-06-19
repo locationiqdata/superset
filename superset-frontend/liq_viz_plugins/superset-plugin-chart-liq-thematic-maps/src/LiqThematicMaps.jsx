@@ -401,6 +401,7 @@ export default function LiqThematicMaps(props) {
   const instigateReload = () => {
     setLoadSecondMap(false);
     setTransformedProps({});
+    setTransformedCustomProps({});
     setCompareProps({});
     setCompareData([]);
     compareMap.current.remove();
