@@ -362,15 +362,15 @@ function Map(props, ref) {
       map.current.addImage('marker', img);
     });
 
-    // Load all CSS icon images
-    Object.keys(iconsSVG).map(k => {
-      map.current.addImage(k, iconsSVG[k]);
-    })
-
     if (!load) return;
 
     // Load map tiles and their default styles
     map.current.on('load', () => {
+
+      // Load all CSS icon images
+      Object.keys(iconsSVG).map(k => {
+        map.current.addImage(k, iconsSVG[k]);
+      });
 
       if (tradeAreas && tradeAreas.length > 0) {
         map.current.flyTo({
@@ -675,12 +675,6 @@ function Map(props, ref) {
     setRenderedIntranetLayers([...intranetLayers]);
     dispersePoints();
   }, [intranetLayers])
-
-  // Render custom layers
-  useEffect(() => {
-    if (!map.current) return;
-    loadCustomLayers(customLayers);
-  }, [customLayers]);
 
   // Main map initialization hook
   useEffect(() => {
