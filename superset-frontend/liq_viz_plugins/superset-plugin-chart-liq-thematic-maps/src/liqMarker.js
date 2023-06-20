@@ -285,6 +285,8 @@ export default class LiqMarker {
     // Create an Iamge object with the data URL
     const image = new Image();
     image.src = dataUrl;
+    image.width = this.size;
+    image.height = this.size;
 
     return image;
   }
